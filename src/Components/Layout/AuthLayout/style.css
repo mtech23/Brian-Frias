@@ -1,0 +1,84 @@
+.authBg {
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9feff;
+}
+
+.authLogoBox img {
+    max-width: 100%;
+    width: 163px;
+    height: 57px;
+}
+
+.authImage, .authImage img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-theme-primary {
+    color: #d71201;
+}
+
+
+
+.authBox {
+    background-color: #fff;
+    border-radius: 0.5rem;
+}
+
+.authImage img {
+    width: 100%;
+    max-width: 100%;
+    object-position: right;
+}
+
+.authFormWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.authForm {
+    border-radius: 9px;
+    padding: 2rem 3rem;
+    width: 100%;
+    background-color: #141414;
+    box-sizing: border-box;
+    /* box-shadow: rgba(0, 0, 0, 0.16) 15px 8px 36px 0px, rgba(0, 0, 0, 0.06) 10px 20px 0px 1px; */
+    box-shadow: rgba(0, 0, 0, 0.25) 20px -8px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.authLogo {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.authLogo img {
+    max-width: 100%;
+}
+
+.authFormHeader {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.authTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primaryColor);
+}
+
+.authPara {
+    font-size: 16px;
+    font-weight: 600;
+    color: #666;
+}
+
+.authForm h1 {
+    font-size: 3rem !important;
+}

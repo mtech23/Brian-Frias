@@ -1,0 +1,101 @@
+.stats {
+    margin-bottom: 1rem;
+    border-right: 2px solid #fff0;
+}
+
+.avatarIcon {
+    width: 60px;
+    height: 60px;
+}
+
+.productImage img {
+    width: 100%;
+    object-fit: cover;
+    height: 530px;
+}
+
+.profile_image img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.font-weight-bold {
+    font-weight: bold;
+}
+
+.action {
+    /* display: flex; */
+}
+
+.action button:nth-child(2) {
+    margin-left: 12px;
+}
+
+ 
+.userheader{
+    padding: 12px 9px;
+
+/* padding: 8px 16px; */
+align-items: center;
+box-shadow: rgb(70 70 109 / 20%) 9px 16px 20px 0px;
+border-radius: 7px;
+}
+#searchs {
+    background-image: url("../../Assets//images/usersearch.png");
+    margin: 0;
+    font-family: inherit;
+    background-repeat: no-repeat;
+    background-size: 7% 42%;
+    font-size: inherit;
+    /* line-height: inherit; */
+    /* background: black; */
+    /* border: white; */
+    /* outline: auto; */
+    color: white;
+    border: rounded;
+    padding: 20px 43px;
+    width: 16rem;
+    height: 2.48rem;
+    border-radius: 6px;
+    background-position: 11px 14px;
+    border: 1px solid;
+    background-color: transparent;
+}
+
+.edit {
+    border-radius: 58%;
+    width: 36px;
+    padding: 5px 10px;
+    border: none;
+    color: white;
+
+}
+
+#act {
+    width: 1.92rem;
+    height: 2.3rem;
+
+}
+
+@media screen and (max-width: 1200px) and (min-width: 768px) {
+
+    .stats,
+    .stats:not(:last-child) {
+        border-color: #fff0;
+    }
+
+    .stats:nth-child(odd) {
+        border-color: #000;
+    }
+}
+
+@media screen and (max-width: 767px) {
+
+    .stats,
+    .stats:not(:last-child),
+    .stats:nth-child(odd) {
+        border-color: #fff0;
+    }
+}
