@@ -43,7 +43,7 @@ export const Ordermanagement = () => {
   const [inputValue, setInputValue] = useState("");
 
   const navigate = useNavigate();
-
+  const [data, setData] = useState([]);
   // const handlePageChange = (pageNumber) => {
   //   setCurrentPage(pageNumber);
   // };
@@ -141,17 +141,97 @@ export const Ordermanagement = () => {
     },
 
 
-    
+
     {
       key: "Action",
       title: "Action",
     },
 
   ];
-  const handleedit = () =>{
+  const handleedit = () => {
     navigate('/edit-orders')
   }
- 
+
+
+  const OrderData = () => {
+    const consumerKey = process.env.REACT_APP_CONSUMERKEY
+    const consumerSecret = process.env.REACT_APP_CONSUMERSECRET;
+    const encodedCredentials = btoa(`${consumerKey}:${consumerSecret}`);
+
+    document.querySelector(".loaderBox").classList.remove("d-none");
+
+    fetch(
+      `${base_url}/wc/v3/orders`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        document.querySelector(".loaderBox").classList.add("d-none");
+        setData(data);
+      })
+      .catch((error) => {
+        document.querySelector(".loaderBox").classList.add("d-none");
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    OrderData()
+  }, [])
+
+
+
+  
+  const Orderdelete = (id) => {
+    const consumerKey = process.env.REACT_APP_CONSUMERKEY
+    const consumerSecret = process.env.REACT_APP_CONSUMERSECRET;
+    const encodedCredentials = btoa(`${consumerKey}:${consumerSecret}`);
+
+    document.querySelector(".loaderBox").classList.remove("d-none");
+
+    fetch(
+      `${base_url}/wc/v3/orders/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        document.querySelector(".loaderBox").classList.add("d-none");
+        // setData(data);
+        ProductData()
+      })
+      .catch((error) => {
+        document.querySelector(".loaderBox").classList.add("d-none");
+        console.log(error);
+      });
+  };
+
+
+
   return (
     <>
       <DashboardLayout>
@@ -183,7 +263,7 @@ export const Ordermanagement = () => {
                           <tbody>
                             <tr>
                               <td>{index + 1}</td>
-                               
+
                               <td className="text-capitalize">Lorem Ipsum Is A Dummy</td>
                               <td>05/11/2024</td>
                               <td>#2612</td>
@@ -202,7 +282,7 @@ export const Ordermanagement = () => {
                                       icon={faEdit}
                                       className="tableActionIcon"
                                     /></button>
-                                  <button className="edit  bg-danger    ">
+                                  <button onClick={Orderdelete} className="edit  bg-danger    ">
                                     <FontAwesomeIcon
                                       icon={faTrash}
                                       className="tableActionIcon"
@@ -220,7 +300,7 @@ export const Ordermanagement = () => {
             </div>
           </div>
 
-          
+
         </div>
       </DashboardLayout>
     </>

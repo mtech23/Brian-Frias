@@ -7,69 +7,53 @@ import CustomInput from "../../Components/CustomInput";
 import { SelectBox } from "../../Components/CustomSelect";
 import CustomButton from "../../Components/CustomButton";
 export const EditPoductManagement = () => {
+  const consumerKey = process.env.REACT_APP_CONSUMERKEY
+  const consumerSecret = process.env.REACT_APP_CONSUMERSECRET;
+  const encodedCredentials = btoa(`${consumerKey}:${consumerSecret}`);
   const { id } = useParams();
+  const [filePreviews, setFilePreviews] = useState([]); // Ensure this state is defined
+
   const [categories, setCategories] = useState({});
   const [unit, setUnit] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    image: "", // Initialize image as an empty string
-  });
+  const [formData, setFormData] = useState({ images: [] });
 
-//   const fetchCatories = () => {
-//     const LogoutData = localStorage.getItem("login");
-//     document.querySelector(".loaderBox").classList.remove("d-none");
-//     fetch(
-//       `https://custom.mystagingserver.site/Tim-WDLLC/public/api/admin/category_listing`,
-//       {
-//         method: "GET",
-//         headers: {
-//           Accept: "application/json",
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${LogoutData}`,
-//         },
-//       }
-//     )
-//       .then((response) => response.json())
-//       .then((data) => {
-//         console.log(data);
-//         document.querySelector(".loaderBox").classList.add("d-none");
-//         setCategories(data.data);
-//       })
-//       .catch((error) => {
-//         document.querySelector(".loaderBox").classList.add("d-none");
-//         console.log(error);
-//       });
-//   };
 
-//   const fetechBookData = () => {
-//     const LogoutData = localStorage.getItem("login");
-//     document.querySelector(".loaderBox").classList.remove("d-none");
-//     fetch(
-//       `https://custom.mystagingserver.site/Tim-WDLLC/public/api/admin/book_view/${id}`,
-//       {
-//         method: "GET",
-//         headers: {
-//           Accept: "application/json",
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${LogoutData}`,
-//         },
-//       }
-//     )
-//       .then((response) => response.json())
-//       .then((data) => {
-//         console.log(data);
-//         document.querySelector(".loaderBox").classList.add("d-none");
-//         setFormData(data.data);
-//       })
-//       .catch((error) => {
-//         document.querySelector(".loaderBox").classList.add("d-none");
-//         console.log(error);
-//       });
-//   };
-//   useEffect(() => {
-//     fetchCatories();
-//     fetechBookData();
-//   }, []);
+
+
+
+
+  const [file, setFile] = useState([]);
+  const [data, setData] = useState({})
+  const [files, setFiles] = useState([])
+
+
+
+
+  const filehandleChange = (event) => {
+    const selectedFiles = event.target.files;
+    const filesArray = Array.from(selectedFiles);
+
+    Promise.all(filesArray.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ file, src: reader.result });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    })).then(dataUrls => {
+      setFormData(prevData => ({
+        ...prevData,
+        images: [...(prevData?.images || []), ...dataUrls]
+      }));
+    }).catch(error => {
+      console.error("Error reading files: ", error);
+    });
+  };
+
+
+
+
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -80,22 +64,54 @@ export const EditPoductManagement = () => {
     console.log(formData);
   };
 
-  const filehandleChange = (event) => {
-    const file = event.target.files[0];
-    // console.log(file.name)
-    if (file) {
-      const fileName = file;
-      setFormData((prevData) => ({
-        ...prevData,
-        image: fileName,
-      }));
-    }
-    console.log(formData);
+
+  const base_url = process.env.REACT_APP_API_URL;
+
+  const ProductData_byid = () => {
+
+
+
+    document.querySelector(".loaderBox").classList.remove("d-none");
+
+    fetch(
+      `${base_url}/wc/v3/products/${id}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        document.querySelector(".loaderBox").classList.add("d-none");
+        setFormData(data);
+        setFilePreviews(data)
+        setFile()
+      })
+      .catch((error) => {
+        document.querySelector(".loaderBox").classList.add("d-none");
+        console.log(error);
+      });
   };
 
+  useEffect(() => {
+    ProductData_byid()
+  }, [id])
+
+  console.log(data)
   const LogoutData = localStorage.getItem("login");
 
   const handleSubmit = (event) => {
+
     event.preventDefault();
 
     // Create a new FormData object
@@ -108,14 +124,14 @@ export const EditPoductManagement = () => {
     document.querySelector(".loaderBox").classList.remove("d-none");
     // Make the fetch request
     fetch(
-      `https://custom.mystagingserver.site/Tim-WDLLC/public/api/admin/book_add_update/${id}`,
+      `${base_url}/wc/v3/products/${id}`,
       {
-        method: "POST",
+        method: "PATCH",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${LogoutData}`,
+          "Content-Type": "application/json",
+          Authorization: `Basic ${encodedCredentials}`,
         },
-        body: formDataMethod, // Use the FormData object as the request body
       }
     )
       .then((response) => {
@@ -131,6 +147,22 @@ export const EditPoductManagement = () => {
         console.log(error);
       });
   };
+
+
+
+
+
+
+  const handleRemoveImage = (index) => {
+    console.log("index", index);
+    setFormData((prevData) => ({
+      ...prevData,
+      images: prevData.images.filter((_, id) => id !== index),
+    }));
+    setFilePreviews((prevPreviews) => prevPreviews?.images?.filter((_, id) => id !== index));
+  };
+
+
 
   return (
     <>
@@ -173,8 +205,8 @@ export const EditPoductManagement = () => {
                           placeholder="SKU"
                           labelClass="mainLabel"
                           inputClass="mainInput"
-                          name="jobID"
-                          value={formData?.jobID}
+                          name="sku"
+                          value={formData?.sku}
                           onChange={handleChange}
                         />
                       </div>
@@ -187,8 +219,8 @@ export const EditPoductManagement = () => {
                           placeholder="STOCK"
                           labelClass="mainLabel"
                           inputClass="mainInput"
-                          name="email"
-                          value={formData?.email}
+                          name="stock_quantity"
+                          value={formData?.stock_quantity}
                           onChange={handleChange}
                         />
                       </div>
@@ -201,12 +233,12 @@ export const EditPoductManagement = () => {
                           placeholder="PRICE"
                           labelClass="mainLabel"
                           inputClass="mainInput"
-                          name="info"
-                          value={formData?.info}
+                          name="price"
+                          value={formData?.price}
                           onChange={handleChange}
                         />
                       </div>
-                      
+
 
 
                       <div className="col-md-6 mb-4">
@@ -224,35 +256,51 @@ export const EditPoductManagement = () => {
                         />
                       </div>
 
-                      
+
                       <div className="col-md-6 mb-4">
                         <CustomInput
                           label="DATE"
                           required
                           id="info"
-                          type="text"
+                          type="date"
                           placeholder="DATE"
                           labelClass="mainLabel"
                           inputClass="mainInput"
-                          name="info"
-                          value={formData?.info}
+                          name="date_created"
+                          value={formData?.date_created}
                           onChange={handleChange}
                         />
                       </div>
-               
-                      {/* <div className="col-md-6 mb-4">
-                        <SelectBox
-                          selectClass="mainInput"
-                          name="category_id"
-                          label="Select Category"
+                      <div className="col-md-6 mb-4">
+                        <CustomInput
+                          label="Product Image"
                           required
-                          value={formData?.category_id}
-                          option={categories}
-                          onChange={handleChange}
+                          id="info"
+                          type="file"
+                          placeholder="DATE"
+                          labelClass="mainLabel"
+                          inputClass="mainInput"
+                          multiple
+                          name="image"
+                          // value={formData?.info}
+                          onChange={filehandleChange}
                         />
-                      </div> */}
-                      
-                      {/* <div className="col-md-12 mb-4">
+                        {/* <image src={formData?.image} /> */}
+
+                        <div className="row">
+                          {formData?.images?.map((dataUrl, index) => (
+                            <div key={index} className="galleryItem col-md-4 mb-3 position-relative">
+                              <div className="remove-icon" onClick={() => handleRemoveImage(index)}>x</div>
+                              <img src={dataUrl?.src} className="product_images w-100" alt={`Image ${index}`} />
+                            </div>
+                          ))}
+                        </div>
+
+
+                      </div>
+
+
+                      <div className="col-md-6 mb-4">
                         <div className="inputWrapper">
                           <div className="form-controls">
                             <label htmlFor="">Description</label>
@@ -267,7 +315,20 @@ export const EditPoductManagement = () => {
                             ></textarea>
                           </div>
                         </div>
+                      </div>
+                      {/* <div className="col-md-6 mb-4">
+                        <SelectBox
+                          selectClass="mainInput"
+                          name="category_id"
+                          label="Select Category"
+                          required
+                          value={formData?.category_id}
+                          option={categories}
+                          onChange={handleChange}
+                        />
                       </div> */}
+
+
                       <div className="col-md-12">
                         <CustomButton
                           variant="primaryButton"

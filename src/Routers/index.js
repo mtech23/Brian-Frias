@@ -105,7 +105,7 @@ export default function AdminRouter() {
         />
 
         <Route
-          path="/edit-product"
+          path="/edit-product/:id"
           element={<EditPoductManagement />}
         />
 

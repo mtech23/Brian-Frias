@@ -42,6 +42,7 @@ export const ReportsAnalytics = () => {
   // const [showModal4, setShowModal4] = useState(false);
   // const [currentPage, setCurrentPage] = useState(1);
   // const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [datas, setData] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
   const navigate = useNavigate();
@@ -172,6 +173,47 @@ export const ReportsAnalytics = () => {
       },
     },
   }
+
+
+
+  const ReportData = () => {
+    const consumerKey = process.env.REACT_APP_CONSUMERKEY
+    const consumerSecret = process.env.REACT_APP_CONSUMERSECRET;
+    const encodedCredentials = btoa(`${consumerKey}:${consumerSecret}`);
+
+    document.querySelector(".loaderBox").classList.remove("d-none");
+
+    fetch(
+      `${base_url}/wc/v3/reports`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        document.querySelector(".loaderBox").classList.add("d-none");
+        setData(data);
+      })
+      .catch((error) => {
+        document.querySelector(".loaderBox").classList.add("d-none");
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    ReportData()
+  }, [])
+
   return (
     <>
       <DashboardLayout>

@@ -30,44 +30,44 @@ const AdminLogin = () => {
 
 
         event.preventDefault();
-        // document.querySelector('.loaderBox')?.classList.remove("d-none");
+        document.querySelector('.loaderBox')?.classList.remove("d-none");
 
-        navigate('/dashboard')
-        // const formDataMethod = new FormData();
-        // formDataMethod.append('email', formData.email);
-        // formDataMethod.append('password', formData.password);
-        // console.log(formData)
+ 
+        const formDataMethod = new FormData();
+        formDataMethod.append('email', formData.email);
+        formDataMethod.append('password', formData.password);
+        console.log(formData)
 
-        // const apiUrl = `${base_url}/api/login-user`;
-
-
-        // try {
-        //     const response = await fetch(`${process.env.REACT_APP_API_URL}api/login-user`, {
-        //         method: 'POST',
-        //         body: formDataMethod
-        //     });
-
-        //     if (response.ok) {
-
-        //         const responseData = await response.json();
-        //         if (responseData) {
-        //             localStorage.removeItem('UserLogin');
-        //             localStorage.setItem('login', responseData.data.token);
-        //             console.log('Login Response:', responseData);
-        //             document.querySelector('.loaderBox')?.classList.add("d-none");
-        //             navigate('/dashboard')
-        //         }
+        const apiUrl = `${base_url}/api/login-user`;
 
 
-        //     } else {
-        //         document.querySelector('.loaderBox')?.classList.add("d-none");
-        //         alert('Invalid Credentials')
-        //         console.error('Login failed');
-        //     }
-        // } catch (error) {
-        //     document.querySelector('.loaderBox')?.classList.add("d-none");
-        //     console.error('Error:', error);
-        // }
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user-login`, {
+                method: 'POST',
+                body: formDataMethod
+            });
+
+            if (response.ok) {
+                document.querySelector('.loaderBox')?.classList.add("d-none");
+                const responseData = await response.json();
+                if (responseData?.success == true) {
+                    localStorage.removeItem('UserLogin');
+                    localStorage.setItem('login', responseData.data.token);
+                    console.log('Login Response:', responseData);
+                    document.querySelector('.loaderBox')?.classList.add("d-none");
+                    navigate('/dashboard')
+                }
+
+
+            } else {
+                document.querySelector('.loaderBox')?.classList.add("d-none");
+                alert('Invalid Credentials')
+                console.error('Login failed');
+            }
+        } catch (error) {
+            document.querySelector('.loaderBox')?.classList.add("d-none");
+            console.error('Error:', error);
+        }
 
 
     };

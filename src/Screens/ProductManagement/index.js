@@ -32,14 +32,19 @@ import "./style.css";
 import { users } from "./Data";
 
 export const Productmanagement = () => {
+  // const url = process.env.REACT_APP_BASE_URL;
+
+
+  const base_url = process.env.REACT_APP_API_URL;
+
   // const base_url = "https://custom2.mystagingserver.site/food-stadium/public/";
-  // const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
   // const [showModal, setShowModal] = useState(false);
   // const [showModal2, setShowModal2] = useState(false);
   // const [showModal3, setShowModal3] = useState(false);
   // const [showModal4, setShowModal4] = useState(false);
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
   const [inputValue, setInputValue] = useState("");
 
   const navigate = useNavigate();
@@ -68,7 +73,7 @@ export const Productmanagement = () => {
   };
 
   // const filterData = data?.filter((item) =>
-  //   item.title.toLowerCase().includes(inputValue.toLowerCase())
+  //   item?.name.toLowerCase().includes(inputValue.toLowerCase())
   // );
 
   // const indexOfLastItem = currentPage * itemsPerPage;
@@ -79,7 +84,7 @@ export const Productmanagement = () => {
   //   const LogoutData = localStorage.getItem("login");
   //   document.querySelector(".loaderBox").classList.remove("d-none");
   //   fetch(
-  //     "https://custom2.mystagingserver.site/food-stadium/public/api/vendor/product_listing",
+  //     `${url}/public/api/vendor/product_listing`,
   //     {
   //       method: "GET",
   //       headers: {
@@ -101,10 +106,108 @@ export const Productmanagement = () => {
   //     });
   // };
 
-  // useEffect(() => {
-  //   document.title = "Soma Hire | Product Management";
-  //   ProductData();
-  // }, []);
+
+
+
+
+
+  const ProductData = () => {
+    const consumerKey = process.env.REACT_APP_CONSUMERKEY
+    const consumerSecret = process.env.REACT_APP_CONSUMERSECRET;
+    const encodedCredentials = btoa(`${consumerKey}:${consumerSecret}`);
+
+    document.querySelector(".loaderBox").classList.remove("d-none");
+
+    fetch(
+      `${base_url}/wc/v3/products`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        document.querySelector(".loaderBox").classList.add("d-none");
+        setData(data);
+      })
+      .catch((error) => {
+        document.querySelector(".loaderBox").classList.add("d-none");
+        console.log(error);
+      });
+  };
+
+
+
+
+
+  const ProductDatadelete = (id) => {
+    const consumerKey = process.env.REACT_APP_CONSUMERKEY
+    const consumerSecret = process.env.REACT_APP_CONSUMERSECRET;
+    const encodedCredentials = btoa(`${consumerKey}:${consumerSecret}`);
+
+    document.querySelector(".loaderBox").classList.remove("d-none");
+
+    fetch(
+      `${base_url}/wc/v3/products/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        document.querySelector(".loaderBox").classList.add("d-none");
+        // setData(data);
+        ProductData()
+      })
+      .catch((error) => {
+        document.querySelector(".loaderBox").classList.add("d-none");
+        console.log(error);
+      });
+  };
+
+
+
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const formattedDate = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const formattedTime = date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    return `${formattedDate} ${formattedTime}`;
+  };
+
+  useEffect(() => {
+    document.title = "Brain Frias | Product Management";
+    ProductData();
+  }, []);
 
   const userHeaders = [
     {
@@ -147,10 +250,28 @@ export const Productmanagement = () => {
     },
 
   ];
-  const handleedit = () =>{
-    navigate('/edit-product')
+  const handleedit = (id) => {
+    navigate(`/edit-product/${id}`)
   }
-// edit-product
+
+  // const handledelete = async (id) => {
+  //   document.querySelector(".loaderBox").classList.remove("d-none");
+  //   try {
+  //     const response = await GetbooksDelete(id);
+  //     console.log("response", response);
+
+  //     if (response?.status == true) {
+  //       document.querySelector(".loaderBox").classList.add("d-none");
+  //       booklist();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error in logging in:", error);
+
+  //     // toastAlert(error, ALERT_TYPES.ERROR);
+  //   }
+  // };
+  // handledelete
+  // edit-product
   return (
     <>
       <DashboardLayout>
@@ -177,20 +298,24 @@ export const Productmanagement = () => {
                 <div className="row mb-3">
                   <div className=" reporttable  mt-3 bg-white col-12">
                     <CustomTable headers={userHeaders}>
-                      {users &&
-                        users.map((item, index) => (
+                      {data &&
+                        data?.map((item, index) => (
                           <tbody>
                             <tr>
                               <td>{index + 1}</td>
-                               
-                              <td className="text-capitalize">Bang Tang Custom Barracuda</td>
-                              <td>SHIV 0018-1-1-1</td>
-                              <td>In Stock (6)</td>
-                              <td>$160.00</td>
-                              <td>Bang Tang Custom Knives,
-                                Knives, Disciples</td>
-                              <td>Published
-                                2024/03/25 at 4:43 AM</td>
+
+                              <td className="text-capitalize">{item?.name}</td>
+                              <td>{item?.sku}</td>
+                              <td>In Stock {item?.bundle_stock_quantity}</td>
+                              <td>${item?.price}</td>
+                              <td>{item?.categories?.map((data) => (
+                                <p className=" d-flex">
+                                  {data?.name}
+                                </p>
+
+                              ))}</td>
+                              <td>Published {formatDateTime(item?.date_created)}</td>
+
 
                               <td>
 
@@ -198,12 +323,12 @@ export const Productmanagement = () => {
 
                                 <div className="action" >
 
-                                  <button  onClick={handleedit} className="edit  bg-black    ">
+                                  <button onClick={() => handleedit(item?.id)} className="edit  bg-black    ">
                                     <FontAwesomeIcon
                                       icon={faEdit}
                                       className="tableActionIcon"
                                     /></button>
-                                  <button className="edit  bg-danger    ">
+                                  <button onClick={() => ProductDatadelete(item?.id)} className="edit  bg-danger    ">
                                     <FontAwesomeIcon
                                       icon={faTrash}
                                       className="tableActionIcon"
@@ -221,7 +346,7 @@ export const Productmanagement = () => {
             </div>
           </div>
 
-          
+
         </div>
       </DashboardLayout>
     </>
