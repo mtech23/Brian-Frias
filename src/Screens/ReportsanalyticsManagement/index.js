@@ -243,8 +243,8 @@ export const ReportsAnalytics = () => {
                     <h2 className="mainTitle  me-4 mt-2">Top Products</h2>
 
                     <CustomTable headers={userHeaders}>
-                      {users &&
-                        users.map((item, index) => (
+                      {datas &&
+                        datas?.map((item, index) => (
                           <tbody>
                             <tr id="progress">
                               <td>{index + 1}</td>

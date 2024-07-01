@@ -258,8 +258,8 @@ export const Ordermanagement = () => {
                 <div className="row mb-3">
                   <div className=" reporttable  mt-3 bg-white col-12">
                     <CustomTable headers={userHeaders}>
-                      {users &&
-                        users.map((item, index) => (
+                      {data &&
+                        data.map((item, index) => (
                           <tbody>
                             <tr>
                               <td>{index + 1}</td>
